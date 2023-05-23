@@ -1,0 +1,208 @@
+paths:
+  /cities:
+    get:
+      summary: List all available source and destination cities
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+
+  /airports:
+    get:
+      summary: List all available source and destination airports
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+
+  /cities/{cityId}/airports:
+    get:
+      summary: List the airports within a city
+      parameters:
+        - in: path
+          name: cityId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+
+  /airports/{airportId}/inbound-schedule:
+    get:
+      summary: List the inbound schedule for an airport
+      parameters:
+        - in: path
+          name: airportId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    dayOfWeek:
+                      type: string
+                    arrivalTime:
+                      type: string
+                    flightNumber:
+                      type: string
+                    origin:
+                      type: string
+
+  /airports/{airportId}/outbound-schedule:
+    get:
+      summary: List the outbound schedule for an airport
+      parameters:
+        - in: path
+          name: airportId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    dayOfWeek:
+                      type: string
+                    departureTime:
+                      type: string
+                    flightNumber:
+                      type: string
+                    destination:
+                      type: string
+
+  /routes:
+    get:
+      summary: List the routes connecting two points
+      parameters:
+        - in: query
+          name: departure
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: destination
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: departureDate
+          required: true
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: bookingClass
+          schema:
+            type: string
+            enum: [Economy, Comfort, Business]
+        - in: query
+          name: maxConnections
+          schema:
+            type: integer
+            enum: [0, 1, 2, 3, unbound]
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    route:
+                      type: string
+
+  /bookings:
+    post:
+      summary: Create a booking for a selected route for a single passenger
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                route:
+                  type: object
+                  properties:
+                    flightNo:
+                      type: string
+                    departureTime:
+                      type: string
+                    arrivalTime:
+                      type: string
+                    origin:
+                      type: string
+                    destination:
+                      type: string
+                passenger:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    email:
+                      type: string
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  bookingId:
+                    type: string
+
+/flights/{flightNumber}/check-in:
+    post:
+      summary: Online check-in for a flight
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                passengerName:
+                  type: string
+                bookingId:
+                  type: string
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
